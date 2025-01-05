@@ -4,9 +4,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 // CORS middleware
 const cors = Cors({
-    methods: ["GET"],
-    origin: "https://dynamic-paprenjak-db3280.netlify.app",
-    credentials: true,
+    methods: ["GET"], // Allow only GET requests
+    origin: "*", // Replace '*' with specific origins for security
 });
 
 // Helper to run middleware
@@ -84,17 +83,7 @@ const filterLeads = (
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-    // Handle preflight requests
-    if (req.method === "OPTIONS") {
-        res.setHeader("Access-Control-Allow-Origin", "https://dynamic-paprenjak-db3280.netlify.app");
-        res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        res.status(204).end();
-        return;
-    }
-
-    // Run the CORS middleware
-    await runMiddleware(req, res, cors);
+    await runMiddleware(req, res, cors); // Run the CORS middleware
 
     const { method, query } = req;
 
@@ -128,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json({ leads: paginatedLeads, meta });
     } else {
-        res.setHeader("Allow", ["GET", "OPTIONS"]);
+        res.setHeader("Allow", ["GET"]);
         res.status(405).end(`Method ${method} Not Allowed`);
     }
 }
