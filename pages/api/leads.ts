@@ -1,5 +1,24 @@
-import { leadsData } from '@/src/lib/constant';
-import { NextApiRequest, NextApiResponse } from 'next';
+import Cors from "cors";
+import { leadsData } from "@/src/lib/constant";
+import { NextApiRequest, NextApiResponse } from "next";
+
+// CORS middleware
+const cors = Cors({
+    methods: ["GET"], // Allow only GET requests
+    origin: "*", // Replace '*' with specific origins for security
+});
+
+// Helper to run middleware
+function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: any) {
+    return new Promise((resolve, reject) => {
+        fn(req, res, (result: any) => {
+            if (result instanceof Error) {
+                return reject(result);
+            }
+            return resolve(result);
+        });
+    });
+}
 
 interface Lead {
     id: number;
@@ -63,7 +82,9 @@ const filterLeads = (
     return filteredLeads;
 };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse): void {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
+    await runMiddleware(req, res, cors); // Run the CORS middleware
+
     const { method, query } = req;
 
     if (method === "GET") {
