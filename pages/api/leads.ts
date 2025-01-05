@@ -1,4 +1,4 @@
-import { leadsData } from "../../src/lib/constant";
+import { leadsData } from '@/src/lib/constant';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 interface Lead {
